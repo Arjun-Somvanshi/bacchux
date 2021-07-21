@@ -14,6 +14,13 @@ ScreenManager:
             pos: self.pos
             size: self.size
             radius: [self.height/2]
+    background_normal: ''
+    background_down: ''
+    background_color: (1,1,1,0) 
+    size_hint_y: None
+    font_name: app.fonts['regular']
+    font_size: sp(18)
+    color: app.theme['f1']  if self.state == 'normal' else app.theme['b2']
 
 <CLabel1@Label>:
     color: app.theme['f1']
@@ -21,12 +28,18 @@ ScreenManager:
 
 <MenuScreen>:
     name: 'menuscreen'
-    canvas.before:
-        Color:
-            rgba: app.theme['b1']
-        Ellipse:
-            size: self.width*2, self.height*2
-            pos: 0  , 0 - self.height 
+    StencilView:
+        canvas.before:
+            Color:
+                rgba: app.theme['b2']
+            Rectangle:
+                size: self.size
+                pos: self.pos
+            Color:
+                rgba: app.theme['b1']
+            Ellipse:
+                size: self.width*2, self.height*2
+                pos: 0  , 0 - self.height 
     BoxLayout:
         orientation: 'vertical'
         Widget:
@@ -43,8 +56,52 @@ ScreenManager:
                 font_size: sp(38)
                 size_hint: None, None
                 size: self.texture_size[0] + dp(30), self.texture_size[1] + dp(15)
+        Widget:
+            size_hint_y: None
+            height: dp(50)
         BoxLayout:
-            
+            padding: dp(15)
+            Widget:
+                size_hint_x: 0.7
+            GridLayout:
+                spacing: dp(20)
+                cols: 1
+                RoundedButton:
+                    height: dp(45)
+                    text: 'Backup Now'
+                    
+                RoundedButton:
+                    height: dp(45)
+                    text: 'Schedule Settings'
+
+                RoundedButton:
+                    height: dp(45)
+                    text: 'Backup Directories'
+                    on_release: 
+                        root.change_screen('backupdirectoriesscreen') 
+                RoundedButton:
+                    height: dp(45)
+                    text: 'Application Settings'
+                    
+    AnchorLayout:
+        anchor_x: 'right'
+        anchor_y: 'bottom'
+        padding: dp(15)
+        Button:
+            canvas.before:
+                Color: 
+                    rgba: app.theme['b2'] if self.state == 'normal' else app.theme['f1']
+                Line:
+                    points: [self.x, self.y, self.x, self.top, self.right, self.top, self.right, self.y, self.x, self.y]
+            background_down: ''
+            background_normal: ''
+            background_color: (0,0,0,0)
+            size_hint: None, None
+            size: dp(30), dp(30)
+            text: 'i' 
+            font_size: sp(22)
+            font_name: app.fonts['regular']
+            color: app.theme['b2'] if self.state == 'normal' else app.theme['f1']
 
 <ScheduleScreen>:
     name: 'schedulescreen'
@@ -52,4 +109,120 @@ ScreenManager:
 
 <BackupDirectoriesScreen>:
     name: 'backupdirectoriesscreen'
+    StencilView:
+        canvas.before:
+            Color:
+                rgba: app.theme['b2']
+            Rectangle:
+                size: self.size
+                pos: self.pos
+            Color:
+                rgba: app.theme['b1']
+            Ellipse:
+                size: self.width*2, self.height*2
+                pos: 0 - self.width  , 0  
     BoxLayout:
+        orientation:'vertical'
+        BoxLayout:
+            size_hint_y: None
+            height: dp(70)
+            padding: dp(15), dp(20)
+            RoundedButton:
+                height: dp(35)
+                size_hint_max_x: dp(70)
+                canvas.before:
+                    Clear
+                    Color:
+                        rgba: app.theme['button_normal']  
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [self.height/2]
+
+                    Color:
+                        rgba: app.theme['b1'] if self.state == 'normal' else app.theme['b2']
+                    Rectangle:
+                        size: self.width - self.width/1.5, self.height/3  
+                        pos: self.x + self.width*0.4167, self.y + self.height/3
+                    Triangle:
+                        points: [self.x + self.width*0.4167, self.y + self.height/6, self.x + self.width*0.4167, self.y + self.height*0.66 + self.height/6, self.x + self.width/4, self.y + self.height*0.5]
+                on_release: 
+                    app.root.transition = SlideTransition(direction = 'right')
+                    app.root.current = 'menuscreen'
+
+            Widget:
+
+            CLabel1:
+                canvas.before:
+                    Color:
+                        rgba: app.theme['f1']
+                    Rectangle:
+                        size: self.texture_size[0], dp(2)
+                        pos: self.x, self.y 
+                text: 'Backup Directories' 
+                size_hint_x: None
+                width: self.texture_size[0]
+                font_size: dp(20)
+        BoxLayout:
+            size_hint_y: None
+            height: self.minimum_height
+            padding: dp(15)
+            GridLayout:
+                size_hint_y: None
+                height: self.minimum_height
+                cols: 3
+                spacing: dp(15)
+                RoundedButton:
+                    height: dp(35)
+                    text: 'Add'
+                RoundedButton:
+                    height: dp(35)
+                    text: 'Edit'
+                RoundedButton:
+                    height: dp(35)
+                    text: 'Delete'
+        BoxLayout:
+            padding: dp(15)
+            BoxLayout:
+                padding: dp(20)
+                RecycleView:
+                    viewclass: 'Directory'
+                    data: root.directory_data
+                    RecycleBoxLayout:
+                        orientation: 'vertical'
+                        default_size_hint: 1, None
+                        default_size: None, dp(40)
+                        size_hint_y: None
+                        spacing: dp(15)
+                        height: self.minimum_height
+
+<Directory>:
+    canvas.before:
+        Color:
+            rgba: app.theme['button_normal'] if self.state == 'normal' else app.theme['button_down']
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [self.height/2]
+        Color:
+            rgba: app.theme['f1']  
+        RoundedRectangle:
+            size: self.width - dp(10), self.height - dp(10)
+            pos: self.x + dp(5), self.y + dp(5)
+            radius: [self.height/2]
+
+    opacity: 0.8
+    background_normal: ''
+    background_down: ''
+    background_color: (0,0,0,0)
+    text: root.dir_name
+    font_name: app.fonts['regular']
+    font_size: sp(18)
+    color: app.theme['b1'] if self.state == 'normal' else app.theme['button_down']
+
+
+
+
+
+
+
