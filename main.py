@@ -3,10 +3,11 @@ Config.set('graphics', 'resizable', False)
 from kivy.app import App
 from kivy.metrics import dp, sp
 from kivy.uix.screenmanager import Screen, SlideTransition
+from kivy.uix.recycleview.views import RecycleDataViewBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.core.window import Window
 from kivy.clock import Clock
-from kivy.properties import DictProperty, ListProperty, OptionProperty, StringProperty, BooleanProperty
+from kivy.properties import DictProperty, ListProperty, OptionProperty, StringProperty, BooleanProperty, NumericProperty, ObjectProperty
 from kivy.utils import rgba as RGBA
 from kivy.uix.button import Button
 import os
@@ -28,14 +29,43 @@ class BackupDirectoriesScreen(Screen):
 
     def __init__(self, **kwargs):
         super(BackupDirectoriesScreen, self).__init__(**kwargs)
+        Clock.schedule_once(self.assingn_directory_data)
+    
+    def assingn_directory_data(self, dt):
         for x in range(20):
-            self.directory_data.append({'dir_name': 'hello' + str(x)})
+            self.directory_data.append({'dir_name': 'hello' + str(x), 'owner': self, 'directory_button_color': app.theme['f1'], 'selected': False})
 
-class Directory(Button):
+class Directory(RecycleDataViewBehavior, Button):
     dir_name = StringProperty('') 
     selected = BooleanProperty(False)
     path = StringProperty('')
     excludedPaths = ListProperty([])
+    directory_button_color = ListProperty([1,1,1,1])
+    index = NumericProperty(1)
+    priority = OptionProperty('normal', options=['high', 'medium'])
+    owner = ObjectProperty(None)
+
+    def on_press(self):
+        print('Entered the on_press')
+        if self.owner is not None:
+            global app
+            self.owner.directory_data[self.index]['selected'] = not self.owner.directory_data[self.index]['selected']
+            self.selected = not self.selected 
+            print('OUTSIDE IF')
+            if self.selected:
+                print('assigning new color')
+                self.directory_button_color = app.theme['b2']
+                self.owner.directory_data[self.index]['directory_button_color'] = app.theme['b2']
+            else:
+                print('becoming normal')
+                self.directory_button_color = app.theme['f1']
+                self.owner.directory_data[self.index]['directory_button_color'] = app.theme['f1']
+
+    def refresh_view_attrs(self, rv, index, data):
+        self.index = index
+        return super(Directory, self).refresh_view_attrs(rv, index, data)
+
+
 
 class bacchuxApp(App):
     fonts = DictProperty({'logo': 'fonts/Expletus_Sans/ExpletusSans-BoldItalic.ttf', 

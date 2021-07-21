@@ -153,15 +153,9 @@ ScreenManager:
             Widget:
 
             CLabel1:
-                canvas.before:
-                    Color:
-                        rgba: app.theme['f1']
-                    Rectangle:
-                        size: self.texture_size[0], dp(2)
-                        pos: self.x, self.y 
                 text: 'Backup Directories' 
-                size_hint_x: None
-                width: self.texture_size[0]
+                size_hint: None, None
+                size: self.texture_size
                 font_size: dp(20)
         BoxLayout:
             size_hint_y: None
@@ -182,30 +176,28 @@ ScreenManager:
                     height: dp(35)
                     text: 'Delete'
         BoxLayout:
-            padding: dp(15)
-            BoxLayout:
-                padding: dp(20)
-                RecycleView:
-                    viewclass: 'Directory'
-                    data: root.directory_data
-                    RecycleBoxLayout:
-                        orientation: 'vertical'
-                        default_size_hint: 1, None
-                        default_size: None, dp(40)
-                        size_hint_y: None
-                        spacing: dp(15)
-                        height: self.minimum_height
+            padding: dp(20)
+            RecycleView:
+                viewclass: 'Directory'
+                data: root.directory_data
+                RecycleBoxLayout:
+                    orientation: 'vertical'
+                    default_size_hint: 1, None
+                    default_size: None, dp(40)
+                    size_hint_y: None
+                    spacing: dp(15)
+                    height: self.minimum_height
 
 <Directory>:
     canvas.before:
         Color:
-            rgba: app.theme['button_normal'] if self.state == 'normal' else app.theme['button_down']
+            rgba: app.theme['button_normal']
         RoundedRectangle:
             size: self.size
             pos: self.pos
             radius: [self.height/2]
         Color:
-            rgba: app.theme['f1']  
+            rgba: root.directory_button_color  
         RoundedRectangle:
             size: self.width - dp(10), self.height - dp(10)
             pos: self.x + dp(5), self.y + dp(5)
@@ -218,7 +210,7 @@ ScreenManager:
     text: root.dir_name
     font_name: app.fonts['regular']
     font_size: sp(18)
-    color: app.theme['b1'] if self.state == 'normal' else app.theme['button_down']
+    color: app.theme['b1'] 
 
 
 
