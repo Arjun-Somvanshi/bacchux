@@ -1,0 +1,55 @@
+#: import RGBA kivy.utils.rgba 
+#: import SlideTransition kivy.uix.screenmanager.SlideTransition
+
+ScreenManager:
+    MenuScreen:
+    ScheduleScreen:
+    BackupDirectoriesScreen:
+
+<RoundedButton@Button>:
+    canvas.before: 
+        Color:
+            rgba: app.theme['button_normal'] if self.state == 'normal' else app.theme['button_down']
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [self.height/2]
+
+<CLabel1@Label>:
+    color: app.theme['f1']
+    font_name: app.fonts['logo']
+
+<MenuScreen>:
+    name: 'menuscreen'
+    canvas.before:
+        Color:
+            rgba: app.theme['b1']
+        Ellipse:
+            size: self.width*2, self.height*2
+            pos: 0  , 0 - self.height 
+    BoxLayout:
+        orientation: 'vertical'
+        Widget:
+            size_hint_y: None
+            height: dp(40)
+        BoxLayout:
+            size_hint_y: None
+            height: self.minimum_height
+            Widget:
+                size_hint_y: None
+                height: 0
+            CLabel1:        
+                text: 'bacchux'
+                font_size: sp(38)
+                size_hint: None, None
+                size: self.texture_size[0] + dp(30), self.texture_size[1] + dp(15)
+        BoxLayout:
+            
+
+<ScheduleScreen>:
+    name: 'schedulescreen'
+    BoxLayout:
+
+<BackupDirectoriesScreen>:
+    name: 'backupdirectoriesscreen'
+    BoxLayout:
