@@ -83,6 +83,7 @@ class bacchuxApp(App):
     def on_start(self):
         if not os.path.isfile('resolution.txt'):
             import subprocess
+            subprocess.run('pipenv shell', shell=True)
             subprocess.run('python size.py', shell=True)
             Clock.schedule_once(self.read_resolution, 0.3)
         else:

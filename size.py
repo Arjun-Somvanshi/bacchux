@@ -1,3 +1,5 @@
+from kivy.config import Config
+Config.set('graphics', 'borderless', 1)
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.core.window import Window
