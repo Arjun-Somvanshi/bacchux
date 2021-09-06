@@ -33,11 +33,10 @@ class BackupDirectoriesScreen(Screen):
     
     def assingn_directory_data(self, dt):
         for x in range(20):
-            self.directory_data.append({'dir_name': 'hello' + str(x), 'owner': self, 'directory_button_color': app.theme['f1'], 'selected': False})
+            self.directory_data.append({'dir_name': 'hello' + str(x), 'owner': self, 'directory_button_color': app.theme['f1']})
 
 class Directory(RecycleDataViewBehavior, Button):
     dir_name = StringProperty('') 
-    selected = BooleanProperty(False)
     path = StringProperty('')
     excludedPaths = ListProperty([])
     directory_button_color = ListProperty([1,1,1,1])
@@ -45,25 +44,23 @@ class Directory(RecycleDataViewBehavior, Button):
     priority = OptionProperty('normal', options=['high', 'medium'])
     owner = ObjectProperty(None)
 
-    def on_press(self):
-        print('Entered the on_press')
-        if self.owner is not None:
-            global app
-            self.owner.directory_data[self.index]['selected'] = not self.owner.directory_data[self.index]['selected']
-            self.selected = not self.selected 
-            print('OUTSIDE IF')
-            if self.selected:
-                print('assigning new color')
-                self.directory_button_color = app.theme['b2']
-                self.owner.directory_data[self.index]['directory_button_color'] = app.theme['b2']
-            else:
-                print('becoming normal')
-                self.directory_button_color = app.theme['f1']
-                self.owner.directory_data[self.index]['directory_button_color'] = app.theme['f1']
+    def on_release(self):
+        global app
+
+        directory_screen = app.root.get_screen('directoryscreen')
+        directory_screen.backup_directory_object = self
+
+        app.root.transition = SlideTransition(direction = 'left')
+        app.root.current = 'directoryscreen'
 
     def refresh_view_attrs(self, rv, index, data):
         self.index = index
         return super(Directory, self).refresh_view_attrs(rv, index, data)
+
+class DirectoryScreen(Screen):
+    backup_directory_object = ObjectProperty(None)
+    def on_pre_enter(self):
+        self.ids.dir_name.text = self.backup_directory_object.dir_name
 
 
 
@@ -83,9 +80,8 @@ class bacchuxApp(App):
     def on_start(self):
         if not os.path.isfile('resolution.txt'):
             import subprocess
-            subprocess.run('pipenv shell', shell=True)
-            subprocess.run('python size.py', shell=True)
-            Clock.schedule_once(self.read_resolution, 0.3)
+            subprocess.run('pipenv run python size.py', shell=True)
+            Clock.schedule_once(self.read_resolution, 0.5)
         else:
             self.read_resolution(0)
         Window.clearcolor = self.theme['b1']

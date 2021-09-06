@@ -1,2 +1,4 @@
 resolution.txt
 /filechooserexample
+/__pycache__
+file_example.py

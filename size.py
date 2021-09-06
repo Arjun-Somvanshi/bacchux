@@ -10,7 +10,7 @@ Widget:
 class SizeApp(App):
     def on_start(self):
         Window.maximize()
-        Clock.schedule_once(self.document_size, 0.3)
+        Clock.schedule_once(self.document_size, 0.5)
 
     def document_size(self, dt):
         with open('resolution.txt', 'w') as f:
